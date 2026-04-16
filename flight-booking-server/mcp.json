@@ -1,0 +1,9 @@
+{
+    "mcpServers" : {
+        "flight-booking": {
+            "command": "uv",
+            "args": ["run", "python", "server.py"],
+            "cwd": "/Users/taaibor1/repos/mine/mcp-servers/flight-booking-server"
+        }
+    }
+}
