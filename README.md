@@ -119,3 +119,168 @@ MCP Server Example:
 ```
 
 ## MCP Inspector
+
+* **MCP Inspector** - is an interactive developer tool for testing and debugging MCP servers.
+
+To use the MCP Inspector run the following command:
+
+```shell
+npx @modelcontextprotocol/inspector
+```
+
+The MCP Inspector runs on http://localhost:6274/
+
+
+### Creating flight-booking-server MCP
+
+```
+uv init flight-booking-server
+cd flight-booking-server
+uv add "mcp[cli]"
+```
+
+Here is the code for ***server.py***:
+
+```python
+import json
+
+from mcp.server.fastmcp import FastMCP
+
+mcp = FastMCP("Flight Booking Server")
+
+@mcp.resource("file://airports")  # type: ignore[misc]
+def get_airports() -> str:
+    return json.dumps({
+        "LAX": {"name": "Los Angeles International", "city": "Los Angeles"},
+        "JFK": {"name": "John F. Kennedy International", "city": "Washington"},
+        "LHR": {"name": "London Heathrow", "city": "London"}
+    })
+
+@mcp.tool()  # type: ignore[misc]
+def create_booking(flight_id: str, passenger_name: str) -> dict[str, str]:
+    return {
+        "booking_id": f"BK{flight_id}[-3]",
+        "flight_id": flight_id,
+        "passenger": passenger_name,
+        "status": "confirmed"
+    }
+
+@mcp.prompt()
+def find_best_flight(budget: float, preferences: str = "economy") -> str:
+    return f"Generate a prompt for finding the best flight within budget {budget}. My seeting preference is {preferences}"
+
+
+
+def main() -> None:
+    pass
+
+
+if __name__ == "__main__":
+    pass
+```
+
+Here is the ***mcp.json** file:
+```json
+{
+    "mcpServers" : {
+        "flight-booking": {
+            "command": "uv",
+            "args": ["run", "python", "server.py"],
+            "cwd": "/Users/taaibor1/repos/mine/mcp-servers/flight-booking-server"
+        }
+    }
+}
+```
+
+## MCP Client
+
+* **MCP Client** - is an application, typically an **AI agent**, **chat interface**, or **IDE** that acts as the intiator in the MCP ecosystem, allowing LLMs to securely connect with external data sources and tools, such as databases, APIs, or local files.
+
+A lot of agents support MCP clients automatically, e.g. Cursor or Claude Code have an ***mcp.json** configuration file that simply needs to be configured to point to the MCP servers.
+
+However, if you would like to build your own AI agent, you might want to build the client from scratch.
+
+The important features in an MCP Client are:
+
+* **Roots** - allow clients to specify which directories servers should focus on, communicating intended scope through a coordination mechanism.
+* **Sampling** - allows servers to request LLM completions through the client, enabling an agentic workflow. This approach puts the client in complete control of user permissions and security measures.
+* **Elicitation** - enables servers to request specific information from users during interactions, providing a structured way for servers to gather information on demand.
+
+### Sample MCP Server to Client code
+
+Here is example code for a MCP server
+```
+from mcp.server.fastmcp import FastMCP
+
+mcp = FastMCP("flight-server")
+
+@mcp.tool()
+async def search_flights(origin: str, destination: str)
+    return {"flights": ["flights1", "flights2"]}
+
+@mcp.resource("flight://status/{id}")
+async def get_status(id: str):
+    return {"status": "on_time"}
+
+@mcp.prompt()
+async def find_flight(details: str):
+    return f"Suggestions for {details}"
+
+if __name__ == "__main__":
+    mcp.run(transport="streamable-http", port=8080)
+```
+
+Here is a sample code for its MCP client
+```
+from mcp.client.session import ClientSession
+import asyncio
+
+async def client():
+    client = ClientSession("http://localhost:8080/mcp")
+
+    async with client:
+        # List what's available
+        tools = await client.list_tools()
+
+        # Use tools
+        flights = await client.call_tool("search_flights", {
+            "origin": "SFO",
+            "destination": "JFK"
+        })
+
+        # Read resources
+        status = await client.read_resource("flight://status/UA123")
+
+        # Get prompts
+        advice = await client.get_prompt("find_flight", {
+            "details": "SFO to JFK"
+        })
+    
+asyncio.run(client())
+```
+
+### Contexts 
+
+Contexts allow the server to talk back to the client, i.e. to give updates or sharing progress etc.
+
+Here is example code using Context:
+```python
+from mcp.server.fastmcp import Context, FastMCP
+
+mcp = FastMCP(name="Progress Example")
+
+@mcp.tool()
+async def long_running_task(task_name: str, ctx: Context, steps: int = 5) -> str:
+    await ctx.info(f"Starting: {task_name}")
+
+    for i in range(steps):
+        progress = (i + 1) / steps
+        await ctx.report_progress(
+            progress=progress,
+            total=1.0,
+            message=f"Step {i + 1}/{steps}"
+        )
+        await ctx.debug(f"Completed step {i + 1}")
+    
+    return f"Task '{task_name}' completed"
+```
