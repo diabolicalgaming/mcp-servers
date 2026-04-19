@@ -1,0 +1,25 @@
+{
+  "mcpServers": {
+    "AI Sticky Notes": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--with",
+        "mcp[cli]",
+        "mcp",
+        "run",
+        "/Users/taaibor1/repos/mine/mcp-servers/custom-mcp/main.py"
+      ],
+      "autoApprove": [
+        "add_note",
+        "add_note",
+        "add_note",
+        "add_note",
+        "add_note",
+        "add_note",
+        "add_note",
+        "add_note"
+      ]
+    }
+  }
+}
