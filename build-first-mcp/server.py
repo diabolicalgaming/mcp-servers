@@ -11,7 +11,7 @@ mcp = FastMCP(name="server-name")
 # Add your resource definitions here using the @mcp.resource decorator. Functions that return data/information are marked with @mcp.resource()
 
 # 5. PROMPTS - AI assistance templates
-# Add your prompt definitions here using the @mcp.prompt decorator
+# Add your prompt definitions here using the @mcp.prompt decorator. Use @mcp.prompt() when you want to export prompt templates for clients to use with their own LLM. For example if I am using Kiro, then this Kiro is the client in this case.
 
 #6. Run the server
 def main():
