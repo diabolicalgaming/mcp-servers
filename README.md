@@ -2,7 +2,7 @@
 
 ## Model Context Protocol (MCP):
 
-**Model Context Protocol (MCP)** extends Kiro's capabilities by connecting to specialized servers that provide additional tools and context.
+**Model Context Protocol (MCP)** - is a standard that allows AI models to connect to and use external tools and data.
 
 ## What is MCP?
 
