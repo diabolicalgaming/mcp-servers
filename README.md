@@ -35,7 +35,7 @@ In the steering file, make sure to set a rule for Context7 whenever we are using
 
 ## Why MCP Servers
 
-Essentially Agent Agent use MCP servers to connect to existing API documentation of existing tools to be able to make decisions.
+Essentially Agents use MCP servers to connect to existing API documentation of existing tools to be able to make decisions.
 
 ## MCP Breakdown
 
@@ -261,7 +261,7 @@ asyncio.run(client())
 
 ### Contexts 
 
-Contexts allow the server to talk back to the client, i.e. to give updates or sharing progress etc.
+Contexts - allow the server to talk back to the client, i.e. to give updates or sharing progress etc.
 
 Here is example code using Context:
 ```python
