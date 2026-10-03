@@ -179,7 +179,7 @@ if __name__ == "__main__":
     pass
 ```
 
-Here is the ***mcp.json** file:
+Here is the ***mcp.json*** file:
 ```json
 {
     "mcpServers" : {
@@ -209,7 +209,7 @@ The important features in an MCP Client are:
 ### Sample MCP Server to Client code
 
 Here is example code for a MCP server
-```
+```python
 from mcp.server.fastmcp import FastMCP
 
 mcp = FastMCP("flight-server")
@@ -231,7 +231,7 @@ if __name__ == "__main__":
 ```
 
 Here is a sample code for its MCP client
-```
+```python
 from mcp.client.session import ClientSession
 import asyncio
 
